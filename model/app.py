@@ -71,16 +71,27 @@ from sklearn.metrics.pairwise import cosine_similarity
 # Cache models to prevent reloading on every interaction
 @st.cache_resource
 def load_models():
+    # Define paths relative to this script file
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    movie_dict_path = os.path.join(current_dir, 'movie_dict.pkl')
+    similarity_path = os.path.join(current_dir, 'similarity.pkl')
+    movies_csv_path = os.path.join(current_dir, 'tmdb_5000_movies.csv')
+    credits_csv_path = os.path.join(current_dir, 'tmdb_5000_credits.csv')
+
     # check if pkl files exist
-    if os.path.exists('movie_dict.pkl') and os.path.exists('similarity.pkl'):
-        movie_list = pickle.load(open('movie_dict.pkl','rb'))
-        similarity_matrix = pickle.load(open('similarity.pkl','rb'))
+    if os.path.exists(movie_dict_path) and os.path.exists(similarity_path):
+        movie_list = pickle.load(open(movie_dict_path,'rb'))
+        similarity_matrix = pickle.load(open(similarity_path,'rb'))
         return pd.DataFrame(movie_list), similarity_matrix
     else:
         # If models are missing (e.g. on Streamlit Cloud), generate them!
         with st.spinner('Building model for the first time... (This takes a minute)'):
-            movies = pd.read_csv('tmdb_5000_movies.csv')
-            credits = pd.read_csv('tmdb_5000_credits.csv')
+            if not os.path.exists(movies_csv_path) or not os.path.exists(credits_csv_path):
+                st.error(f"Required CSV files not found at: {movies_csv_path}")
+                return pd.DataFrame(), []
+
+            movies = pd.read_csv(movies_csv_path)
+            credits = pd.read_csv(credits_csv_path)
             
             movies = movies.merge(credits, on='title')
             movies = movies[['movie_id', 'title', 'overview', 'genres', 'keywords', 'cast', 'crew']]
