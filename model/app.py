@@ -86,13 +86,17 @@ def load_models():
     else:
         # If models are missing (e.g. on Streamlit Cloud), generate them!
         with st.spinner('Building model for the first time... (This takes a minute)'):
-            if not os.path.exists(movies_csv_path) or not os.path.exists(credits_csv_path):
-                files_in_dir = os.listdir(current_dir)
-                st.error(f"CSV files not found. Searched in: {current_dir}. Found files: {files_in_dir}")
-                return pd.DataFrame(), []
+            # Load data from remote URL (simulating 'direct link' behavior)
+            # Using raw.githubusercontent.com avoids storing large files in the repo
+            movies_url = "https://raw.githubusercontent.com/harshitcodes/tmdb_movie_data_analysis/master/tmdb-5000-movie-dataset/tmdb_5000_movies.csv"
+            credits_url = "https://raw.githubusercontent.com/harshitcodes/tmdb_movie_data_analysis/master/tmdb-5000-movie-dataset/tmdb_5000_credits.csv"
 
-            movies = pd.read_csv(movies_csv_path)
-            credits = pd.read_csv(credits_csv_path)
+            @st.cache_data
+            def fetch_data(url):
+                return pd.read_csv(url)
+
+            movies = fetch_data(movies_url)
+            credits = fetch_data(credits_url)
             
             movies = movies.merge(credits, on='title')
             movies = movies[['movie_id', 'title', 'overview', 'genres', 'keywords', 'cast', 'crew']]
