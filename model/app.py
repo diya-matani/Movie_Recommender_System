@@ -76,7 +76,7 @@ def load_models():
     movie_dict_path = os.path.join(current_dir, 'movie_dict.pkl')
     similarity_path = os.path.join(current_dir, 'similarity.pkl')
     movies_csv_path = os.path.join(current_dir, 'tmdb_5000_movies.csv')
-    credits_csv_path = os.path.join(current_dir, 'tmdb_5000_credits.csv')
+    credits_csv_path = os.path.join(current_dir, 'credits_data.csv')
 
     # check if pkl files exist
     if os.path.exists(movie_dict_path) and os.path.exists(similarity_path):
