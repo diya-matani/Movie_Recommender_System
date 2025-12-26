@@ -87,7 +87,8 @@ def load_models():
         # If models are missing (e.g. on Streamlit Cloud), generate them!
         with st.spinner('Building model for the first time... (This takes a minute)'):
             if not os.path.exists(movies_csv_path) or not os.path.exists(credits_csv_path):
-                st.error(f"Required CSV files not found at: {movies_csv_path}")
+                files_in_dir = os.listdir(current_dir)
+                st.error(f"CSV files not found. Searched in: {current_dir}. Found files: {files_in_dir}")
                 return pd.DataFrame(), []
 
             movies = pd.read_csv(movies_csv_path)
