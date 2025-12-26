@@ -2,7 +2,7 @@ import streamlit as st
 import pickle
 import pandas as pd
 
-# Custom CSS for UI
+# Custom CSS for UI - Deployment Fix v2
 st.markdown("""
 <style>
     .stApp {
